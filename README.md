@@ -5,7 +5,9 @@ This project builds a **Retrieval-Augmented Generation (RAG) chatbot** that allo
 The chatbot integrates **Pinecone** for vector storage and retrieval, **LangChain** for RAG workflows, and **Groq** for AI-based query processing.
 
 The goal is to enable users to ask complex questions related to the ride data and receive insightful answers, including visualizations like graphs, trend analysis, and more.
-
+## To use
+- add 'rag_text.txt' in the same directory as main.py to add files to your vector storage.
+- add 'bookings.csv' in the same directory as main.py to analyze csv files and ask the chatbot questions about your csv.
 ## Features
 
 ### Current Features
