@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat About Your CSV</title>
+    <style>
+        #chat-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        #chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        #message-form {
+            display: flex;
+            gap: 10px;
+        }
+        #message-input {
+            flex-grow: 1;
+            padding: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .end-chat {
+            background-color: #dc3545;
+        }
+        .end-chat:hover {
+            background-color: #c82333;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="chat-container">
+        <h2>Chat about your CSV</h2>
+        <div id="chat-messages"></div>
+        
+        <form id="message-form">
+            {% csrf_token %}
+            <input type="text" id="message-input" placeholder="Ask a question about your data..." required>
+            <button type="submit">Send</button>
+        </form>
+        
+        <button class="end-chat" onclick="endChat()">End Chat</button>
+    </div>
+
+    <script>
+        const fileId = "{{ csv_file.id }}";
+
+        // Handle chat form submission
+        $('#message-form').on('submit', function(e) {
+            e.preventDefault();
+            const message = $('#message-input').val();
+            
+            $.ajax({
+                url: '{% url "chat" csv_file.id %}',
+                method: 'POST',
+                data: {
+                    message: message,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(response) {
+                    $('#chat-messages').append(
+                        `<p><strong>You:</strong> ${message}</p>` +
+                        `<p><strong>Bot:</strong> ${response.response}</p>`
+                    );
+                    $('#message-input').val('');
+                    
+                    // Scroll to bottom of chat
+                    const chatMessages = document.getElementById('chat-messages');
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            });
+        });
+
+        // Handle end chat
+        function endChat() {
+            $.ajax({
+                url: `/end-chat/${fileId}/`,
+                method: 'POST',
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(response) {
+                    if(response.status === 'success') {
+                        window.location.href = '{% url "upload" %}';
+                    }
+                }
+            });
+        }
+
+        // Handle page close/refresh
+        window.addEventListener('beforeunload', function() {
+            navigator.sendBeacon(`/end-chat/${fileId}/`);
+        });
+    </script>
+</body>
+</html>

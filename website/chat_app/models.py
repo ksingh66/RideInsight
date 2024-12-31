@@ -5,7 +5,6 @@ import os
 
 
 class UploadedCSV(models.Model):
-    file_id = models.IntegerField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     raw_csv = models.FileField(upload_to='csv_files/')
     uploaded_at = models.DateTimeField(auto_now_add=True)

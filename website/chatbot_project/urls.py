@@ -27,5 +27,10 @@ urlpatterns = [
         template_name='chat_app/login.html',
         redirect_authenticated_user=True
     ), name='login'),
-    path('upload/', views.upload_view, name='upload'),
+    path('', views.upload_view, name='upload'),  # Changed from 'upload/' to '' to make it the main page
+    # Chat view (after file upload)
+    path('chat/<int:id>/', views.chat_view, name='chat'),
+    # End chat endpoint
+    path('end-chat/<int:id>/', views.end_chat, name='end_chat'),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

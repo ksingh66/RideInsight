@@ -1,0 +1,110 @@
+Data Analysis Summary
+Generated on: 2024-12-30 07:28:59
+
+Successfully loaded data from: /Users/karmansingh/Desktop/Coding/Personal/Visual Studio Python/Japinder-work/website/media/csv_files/Blacklane_recordV.2_-_Nov.csv
+Dataset contains 210 total bookings/rides.
+Columns present: Booking #, PAX, Chauffer, Pickup, Dropoff, Price, Date, Unnamed: 7
+
+
+Missing Values Analysis:
+Dropoff: 9 missing values (4.3%)
+Unnamed: 7: 186 missing values (88.6%)
+
+Price Analysis:
+Average Price: $127.44
+Minimum Price: $0.00
+Maximum Price: $930.28
+Standard Deviation: $81.80
+Median Price: $108.94
+
+Price Distribution:
+31.4% of items are above the average price
+
+Chauffer Earnings Analysis:
+
+Company-wide Statistics:
+Total Company Earnings: $26,762.15
+Average Earnings per Chauffer: $5,352.43
+
+Individual Chauffer Performance:
+
+Chauffer: Rajdev Singh
+Total Bookings: 54.0
+Average Earning per Booking: $146.20
+Total Earnings: $7,894.67
+
+Chauffer: TEJANDER SINGH
+Total Bookings: 62.0
+Average Earning per Booking: $111.03
+Total Earnings: $6,884.13
+
+Chauffer: Nanak Singh
+Total Bookings: 48.0
+Average Earning per Booking: $135.29
+Total Earnings: $6,494.12
+
+Chauffer: Sukhdev Singh
+Total Bookings: 45.0
+Average Earning per Booking: $121.98
+Total Earnings: $5,489.23
+
+Chauffer: Gurvinder Kaur
+Total Bookings: 1.0
+Average Earning per Booking: $0.00
+Total Earnings: $0.00
+
+Performance Insights:
+Top earning chauffer: Rajdev Singh ($7,894.67)
+Top 3 chauffers account for 79.5% of total earnings
+
+Distribution for PAX:
+Betsy Atkins: 2 (1.0%)
+Tom Dewaele: 2 (1.0%)
+David Hirschmann: 2 (1.0%)
+ERIC ESTORNEL: 2 (1.0%)
+Wei Jiang: 2 (1.0%)
+Gregory Reichow: 2 (1.0%)
+... and 193 more unique values
+
+Distribution for Chauffer:
+TEJANDER SINGH: 62 (29.5%)
+Rajdev Singh: 54 (25.7%)
+Nanak Singh: 48 (22.9%)
+Sukhdev Singh: 45 (21.4%)
+Gurvinder Kaur: 1 (0.5%)
+
+Distribution for Pickup:
+MEET & GREET PICK UP: San Francisco International Airport (SFO), Domestic Terminals, meet at baggage claim | International Terminal, meet in Arrivals Hall after Customs, Airport Access Rd., 94128 San Francisco, CA: 39 (18.6%)
+CURBSIDE PICK UP: San Francisco International Airport (SFO), Coordinate pick up location with chauffeur, Airport Access Rd, 94128 San Francisco, CA: 21 (10.0%)
+Residence Inn Palo Alto Los Altos, El Camino Real 4460, North Los Altos, 94022 Los Altos, California: 5 (2.4%)
+Rosewood Sand Hill, Sand Hill Road 2825, Sharon Heights, 94025 Menlo Park, California: 3 (1.4%)
+Homewood Suites by Hilton Sunnyvale - Silicon Valley, East El Camino Real 830, 94087 Sunnyvale, California: 2 (1.0%)
+250 Shoreline Dr, Shoreline Drive 250, Redwood Shores, 94065 Redwood City, California: 2 (1.0%)
+... and 128 more unique values
+
+Distribution for Dropoff:
+MEET & GREET PICK UP: San Francisco International Airport (SFO), Airport Access Rd., 94128 San Francisco, CA: 76 (36.2%)
+DROP OFFS ONLY: San Francisco International Airport (SFO), Airport Access Rd., 94128 San Francisco, CA: 42 (20.0%)
+The Ritz-Carlton, Half Moon Bay, Miramontes Point Road 1, 94019 Half Moon Bay, California: 5 (2.4%)
+CURBSIDE PICK UP: San Francisco International Airport (SFO), Airport Access Rd, 94128 San Francisco, CA: 5 (2.4%)
+The Ritz-Carlton, San Francisco, Stockton Street 600, Chinatown, 94108 San Francisco, California: 3 (1.4%)
+Hyatt Regency San Francisco Downtown SOMA, 3rd Street 50, Yerba Buena, 94103 San Francisco, California: 2 (1.0%)
+... and 63 more unique values
+
+Distribution for Date:
+Sat, Nov 02, 2:20 PM: 3 (1.4%)
+Sun, Nov 10, 11:40 AM: 2 (1.0%)
+Mon, Nov 11, 11:10 AM: 2 (1.0%)
+Mon, Nov 18, 2:00 PM: 2 (1.0%)
+Wed, Nov 06, 1:20 PM: 2 (1.0%)
+Wed, Nov 06, 10:40 AM: 2 (1.0%)
+... and 184 more unique values
+
+Distribution for Unnamed: 7:
+Wait for rider: 4 (1.9%)
+Passanger came late outside: 3 (1.4%)
+Waited for the guest at the pick up location: 2 (1.0%)
+Due to road work on 101, the Chauffeur had to take 280 N. and which explains to the added kilometres: 1 (0.5%)
+Guest requested to change the drop off location and made the Chauffeur wait until getting a car from enterprise car rental 345 El Camino Real Redwood City, CA 94062 United States: 1 (0.5%)
+Guest requested to make additional stop after ritz Carlton 600 Stockton Street at 335 Powell St San Francisco, CA 94102 United States: 1 (0.5%)
+... and 12 more unique values
