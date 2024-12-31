@@ -3,4 +3,5 @@ __pycache__/
 *.pyc
 .DS_Store
 website/media/*
+!website/media/.gitkeep
 website/db.sqlite3
