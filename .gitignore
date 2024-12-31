@@ -1,7 +1,21 @@
+# Environment Variables
 .env
+
+# Python
 __pycache__/
 *.pyc
+*$py.class
+
+# Django
+*/db.sqlite3
+db.sqlite3
+
+# System files
 .DS_Store
-website/media/*
+
+# Media directories
+website/media/csv_files/
+website/media/summaries/
+
+# Keep media structure but ignore contents
 !website/media/.gitkeep
-website/db.sqlite3
