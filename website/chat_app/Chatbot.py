@@ -239,11 +239,28 @@ class HybridChatbot:
         except Exception as e:
             print(f"Generation error: {e}")
             raise
+    def generate_basic_response(self, query):
+        """
+        Generate a response to the user's query.
+        
+        Args:
+            query (str): User's input query
+        
+        Returns:
+            str: Generated response
+        
+        Raises:
+            Exception: If there's an error generating the response
+        """
+        try:
+            response = self.llm.invoke(query)
+            return response.content
+        except Exception as e:
+            print(f"Generation error: {e}")
+            raise
 
     def chat(self):
         """Interactive chat loop with special commands."""
-        print("Hybrid Chatbot is ready! Type 'exit' to quit.")
-        print("Type 'show context' to see the current static context.\n")
         
         while True:
             user_input = input("You: ").strip()
@@ -251,12 +268,6 @@ class HybridChatbot:
             if user_input.lower() == 'exit':
                 print("Goodbye!")
                 break
-            
-            if user_input.lower() == 'show context':
-                print("\nCurrent Static Context:")
-                print(self.static_context)
-                print()
-                continue
             
             try:
                 response = self.generate_response(user_input)

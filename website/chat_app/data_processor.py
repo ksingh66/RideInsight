@@ -3,6 +3,7 @@
 import pandas as pd
 import os
 from datetime import datetime
+from .Chatbot import HybridChatbot
 
 class DataSummarizer:
     def __init__(self, csv_path):
@@ -31,19 +32,108 @@ class DataSummarizer:
                 )
             
             self.df = pd.read_csv(self.csv_path)
-            self.summary.append(f"Successfully loaded data from: {self.csv_path}")
-            self.summary.append(f"Dataset contains {len(self.df)} total bookings/rides.")
-            self.summary.append(f"Columns present: {', '.join(self.df.columns)}\n")
+            
+            column_names = self.df.columns.tolist()
+            Standardizer = HybridChatbot()
+            prompt = f"""You are a data standardization assistant that maps CSV column names to standardized versions for a luxury chauffeur service booking system while strictly maintaining the original order.
+                        Input columns: {column_names}
+                        Rules for standardization:
+                        - The output list MUST maintain the exact same order as the input list
+                        - Each output element corresponds to the input element at the same position
+                        - Only use these exact standardized names:
+                        "Booking" - for booking/reservation/confirmation numbers
+                        "PAX" - for passenger/client/customer names
+                        "Chauffer" - for driver/chauffer/operator names
+                        "Pickup" - for pickup location/origin/start point
+                        "Dropoff" - for dropoff/destination/end point
+                        "Price" - for cost/fare/amount/price/rate
+                        "Date" - for date/time/schedule information
+                        "Notes" - for comments/remarks/special instructions/additional information
+                        - If a column doesn't match any of these categories, keep it unchanged
+                        - Return ONLY a Python list containing the standardized column names
+                        - The list must be properly formatted with square brackets and quoted strings
+                        - Do not include ANY explanatory text, just the Python list
+                        Example:
+                        Input:  ["confirmation_number", "customer_name", "driver_name", "origin_address", "destination_address", "trip_fare", "pickup_time", "special_requests"]
+                        Output: ["Booking", "PAX", "Chauffer", "Pickup", "Dropoff", "Price", "Date", "Notes"]
+
+                        Standardize these columns:{column_names}"""
+
+            try:
+                standardized_columns = Standardizer.generate_basic_response(prompt)
+                # You'll need to parse this string response into a list
+                standardized_columns = self.parse_llm_response(standardized_columns)
+                # Then rename your DataFrame columns
+                self.df.columns = standardized_columns  # Make sure this is a list!
+
+                
+                # Add to summary after successful standardization
+                self.summary.append(f"Successfully loaded data from: {self.csv_path}")
+                self.summary.append(f"Dataset contains {len(self.df)} total bookings/rides/calls.")
+                self.summary.append(f"Columns standardized and present: {', '.join(self.df.columns)}\n")
+
+            except Exception as e:
+                print(f"Column standardization failed: {e}")
+                # Continue with original column names
+                self.summary.append("Column standardization failed - using original column names")
         except Exception as e:
             self.summary.append(f"Error loading data: {str(e)}")
             raise
-    
+
+    def parse_llm_response(self,response_string):
+            """
+            Parse the LLM's response string into a Python list of column names.
+            
+            Args:
+                response_string (str): The raw response from the LLM
+                
+            Returns:
+                list: A list of standardized column names
+                
+            Raises:
+                ValueError: If the response can't be properly parsed into a list
+            """
+            try:
+                # First, clean up the response string
+                cleaned_response = response_string.strip()
+                
+                # Remove any extra whitespace or newlines
+                cleaned_response = ' '.join(cleaned_response.split())
+                
+                # The response should start with '[' and end with ']'
+                if not (cleaned_response.startswith('[') and cleaned_response.endswith(']')):
+                    raise ValueError("Response is not in the expected list format")
+                    
+                # Remove the brackets
+                content = cleaned_response[1:-1]
+                
+                # Split by commas and clean up each item
+                columns = [
+                    item.strip().strip('"\'')  # Remove quotes and whitespace
+                    for item in content.split(',')
+                    if item.strip()  # Skip empty items
+                ]
+                
+                # Verify we have at least one column name
+                if not columns:
+                    raise ValueError("No column names found in response")
+                    
+                return columns
+        
+            except Exception as e:
+                raise ValueError(f"Failed to parse LLM response: {str(e)}")
+            
     def generate_basic_stats(self):
         """
         Generate basic statistical summaries for the Price column.
         This function specifically analyzes price data, providing key metrics
         that help understand the price distribution in the dataset.
         """
+        # First, check if we have data to work with
+        if self.df is None:
+            print("Debug: Data not loaded yet. Please call load_data() first.")
+            self.summary.append("\nWarning: Attempted to generate statistics before loading data.")
+            return  # Exit the function early
         try:
             # Check if Price column exists in the DataFrame
             if 'Price' not in self.df.columns:
@@ -78,6 +168,11 @@ class DataSummarizer:
         This analysis helps understand the distribution of earnings across different chauffers
         and identifies top performers in terms of revenue generation.
         """
+        if self.df is None:
+            print("Debug: Data not loaded yet. Please call load_data() first.")
+            self.summary.append("\nWarning: Attempted to generate statistics before loading data.")
+            return  # Exit the function early
+
         try:
             # Check if necessary columns exist
             if 'Chauffer' not in self.df.columns or 'Price' not in self.df.columns:
@@ -131,6 +226,11 @@ class DataSummarizer:
    
     def analyze_categories(self):
         """Analyze categorical columns and their distributions."""
+        if self.df is None:
+            print("Debug: Data not loaded yet. Please call load_data() first.")
+            self.summary.append("\nWarning: Attempted to generate statistics before loading data.")
+            return  # Exit the function early
+        
         categorical_cols = self.df.select_dtypes(include=['object', 'category']).columns
         
         for col in categorical_cols:
@@ -147,6 +247,10 @@ class DataSummarizer:
     
     def check_missing_values(self):
         """Analyze missing values in the dataset."""
+        if self.df is None:
+            print("Debug: Data not loaded yet. Please call load_data() first.")
+            self.summary.append("\nWarning: Attempted to generate statistics before loading data.")
+            return  # Exit the function early
         missing = self.df.isnull().sum()
         if missing.any():
             self.summary.append("\nMissing Values Analysis:")
