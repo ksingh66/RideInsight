@@ -2,8 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
 from .models import UploadedCSV
+from django.contrib import messages
 from .data_processor import DataSummarizer
 from .Chatbot import HybridChatbot
+from django.contrib.auth import authenticate, login
+from django.views import View
+from .models import CustomUser
+from .forms import CustomUserRegistrationForm
 import os
 
 def is_approved(user):
@@ -11,6 +16,7 @@ def is_approved(user):
     Checks if a user is both authenticated and approved to use the system.
     This combines Django's built-in authentication check with our custom approval status.
     """
+
     return user.is_authenticated and user.is_approved
 
 def approved_user_required(view_func):
@@ -24,6 +30,40 @@ def approved_user_required(view_func):
         redirect_field_name='next'
     )(view_func)
     return decorated_view
+
+
+class CustomLoginView(View): # We build on the View class thats built in Django
+    template_name = 'chat_app/login.html' # Location of login page
+
+    def get(self, request):
+        # If user is already authenticated, redirect them
+        if request.user.is_authenticated:
+            return redirect('upload')  # Redirect to your main page
+        return render(request, self.template_name)
+
+    def post(self, request):
+        username = request.POST.get('username') 
+        password = request.POST.get('password')
+        
+        # First authenticate the user (checks username and password) - built in function
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            # If user exists and credentials are correct, check approval status
+            if user.is_approved:
+                # If approved, log them in and redirect
+                login(request, user)
+                return redirect('upload')  # Redirect to your main page
+            else:
+                # If not approved, show error message
+                messages.error(request, 'Your account is pending approval. Please wait for administrator approval.')
+                return redirect('pending')
+        else:
+            # If authentication failed (wrong credentials)
+            messages.error(request, 'Invalid username or password.') # Send the message into the html
+        
+        # If anything fails, render the login page again
+        return render(request, self.template_name)
 
 @approved_user_required
 def upload_view(request): #This is the view for the upload page
@@ -103,3 +143,28 @@ def end_chat(request, id):
     except UploadedCSV.DoesNotExist:
         return JsonResponse({'status': 'error'})
 
+def register(request):
+    """
+    Handle user registration with email-based authentication.
+    GET requests display the registration form.
+    POST requests process the form and create a new user if valid.
+    """
+    if request.user.is_authenticated:
+        return redirect('upload')
+    if request.method == 'POST':
+        form = CustomUserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_approved = False
+            user.save()
+            messages.success(request, 'Registration successful! Please wait for admin approval.')
+            return redirect('login')
+    else:
+        form = CustomUserRegistrationForm()
+    return render(request, 'chat_app/register.html', {
+        'form': form,
+        'title': 'Register New Account'
+    })
+
+def pending_view(request):
+    return render(request, 'chat_app/pending.html')

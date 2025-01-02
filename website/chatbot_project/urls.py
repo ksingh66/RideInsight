@@ -23,11 +23,13 @@ from chat_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', auth_views.LoginView.as_view(
-        template_name='chat_app/login.html',
-        redirect_authenticated_user=True
-    ), name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
     path('', views.upload_view, name='upload'),  # Changed from 'upload/' to '' to make it the main page
+
+    path('register/', views.register, name='register'), # Registration page 
+    path('approval_pending/', views.pending_view, name = 'pending'),
+
+
     # Chat view (after file upload)
     path('chat/<int:id>/', views.chat_view, name='chat'),
     # End chat endpoint
