@@ -4,79 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CSV Chatbot</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-            color: #dc3545;
-            margin-bottom: 1rem;
-        }
-    </style>
 </head>
 <body>
     <div class="login-container">
-        <h2 style="text-align: center; margin-bottom: 1.5rem;">CSV Chatbot Login</h2>
+        <h2>CSV Chatbot Login</h2>
         
+        <!-- Error message section that shows up when there are form errors -->
         {% if form.errors %}
-        <div class="error-message">
-            Invalid username or password. Please try again.
+        <div class="error-message" role="alert">
+            {% if form.errors.username %}
+                {{ form.errors.username }}
+            {% elif form.errors.password %}
+                {{ form.errors.password }}
+            {% else %}
+                Invalid email or password. Please try again.
+            {% endif %}
         </div>
         {% endif %}
 
-        <form method="post">
+        <!-- Login form with email and password fields -->
+        <form method="post" novalidate>
             {% csrf_token %}
             <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" name="username" required id="username">
+                <label for="email">Email:</label>
+                <input 
+                    type="email" 
+                    name="username" 
+                    required 
+                    id="email" 
+                    autocomplete="email"
+                    class="form-control"
+                    placeholder="Enter your email address"
+                >
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" name="password" required id="password">
+                <input 
+                    type="password" 
+                    name="password" 
+                    required 
+                    id="password"
+                    autocomplete="current-password"
+                    class="form-control"
+                    placeholder="Enter your password"
+                >
             </div>
-            <button type="submit">Log In</button>
+            <button type="submit" class="login-button">Log In</button>
+
+            <!-- Optional password reset link -->
+            {% if password_reset_url %}
+            <div class="text-center">
+                <a href="{{ password_reset_url }}">Forgot your password?</a>
+            </div>
+            {% endif %}
         </form>
     </div>
 </body>

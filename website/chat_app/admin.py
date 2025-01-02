@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import UploadedCSV
+from .models import UploadedCSV , CustomUser
+from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 
 @admin.register(UploadedCSV)
@@ -19,3 +20,20 @@ class UploadedCSVAdmin(admin.ModelAdmin):
     
     view_raw_csv.short_description = 'Raw CSV'
     view_processed_csv.short_description = 'Processed CSV'
+
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('email', 'company_name', 'is_approved', 'is_active')
+    ordering = ('email',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'company_name')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_approved', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2', 'company_name', 'is_approved'),
+        }),
+    )

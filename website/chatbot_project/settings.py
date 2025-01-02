@@ -46,6 +46,8 @@ INSTALLED_APPS = [
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'upload'  # After login, go to upload page
 
+AUTH_USER_MODEL = 'chat_app.CustomUser'
+
 # Media settings for CSV files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
