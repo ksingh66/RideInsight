@@ -27,3 +27,4 @@ price_stats is a dictionary.
 #### Future updates
 - add all ride info for minimal and maximum earned rides for each chauffeur
 - Make dictionary for column synonyms and only use LLM for special cases.
+- Account for other CSV's that are not Transportation related; Perform error handling.
