@@ -98,7 +98,7 @@ def upload_view(request): #This is the view for the upload page
             except Exception as e:
                 print(f"Error processing file: {e}")
                 csv_file.delete()  # Clean up if processing fails
-                return render(request, 'chat_app/upload.html', {'error': str(e)})
+                return render(request, 'chat_app/error.html', {'error': str(e)})
                 
     return render(request, 'chat_app/upload.html')
 

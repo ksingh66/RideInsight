@@ -169,7 +169,9 @@ class HybridChatbot:
         Based on both the static context and retrieved information above, provide a comprehensive answer.
         If the question is about data or earnings prioritize using the Static Context.
         If the question cannot be fully answered using the available context, please say so.
-        Only use context that is relevant and ignore the rest.
+        Only use context that is relevant and ignore the rest. 
+        Do not mention that you are using Static or Retrieved Context
+        Only answer the question and do not say anything else.
         
         Answer:"""
         

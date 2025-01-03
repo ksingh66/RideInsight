@@ -53,6 +53,8 @@ class DataSummarizer:
                         - Return ONLY a Python list containing the standardized column names
                         - The list must be properly formatted with square brackets and quoted strings
                         - Do not include ANY explanatory text, just the Python list
+                        - If there are more columns given to you than the standardized names, pick the ones most likely to fir the standardized names.
+                        - Do not add new columns and do not reduce columns.
                         Example:
                         Input:  ["confirmation_number", "customer_name", "driver_name", "origin_address", "destination_address", "trip_fare", "pickup_time", "special_requests"]
                         Output: ["Booking", "PAX", "Chauffer", "Pickup", "Dropoff", "Price", "Date", "Notes"]
