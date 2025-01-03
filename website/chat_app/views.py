@@ -107,7 +107,8 @@ def upload_view(request): #This is the view for the upload page
 @approved_user_required
 def chat_view(request, id):
     try:
-        # Get an already made object with .objects.get ; then set the id argument 
+        # Get an already made CSV object with .objects.get ; then set the id argument 
+        # Load the CSV object regardless of if its a POST or GET request
         csv_file = UploadedCSV.objects.get(
             id=id,
             user=request.user,
@@ -127,9 +128,10 @@ def chat_view(request, id):
             response = chatbot.generate_response(user_message)
             return JsonResponse({'response': response})
             
-        return render(request, 'chat_app/chat.html', {
-            'csv_file': csv_file
-        })
+        if request.method == "GET":
+            return render(request, 'chat_app/chat.html', {
+                'csv_file': csv_file
+            })
         
     except UploadedCSV.DoesNotExist:
         return redirect('upload')

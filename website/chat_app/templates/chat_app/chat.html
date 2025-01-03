@@ -1,110 +1,199 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Chat About Your CSV</title>
-    <style>
-        #chat-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-        }
-        #chat-messages {
-            height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-        #message-form {
-            display: flex;
-            gap: 10px;
-        }
-        #message-input {
-            flex-grow: 1;
-            padding: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .end-chat {
-            background-color: #dc3545;
-        }
-        .end-chat:hover {
-            background-color: #c82333;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <div id="chat-container">
-        <h2>Chat about your CSV</h2>
-        <div id="chat-messages"></div>
-        
-        <form id="message-form">
-            {% csrf_token %}
-            <input type="text" id="message-input" placeholder="Ask a question about your data..." required>
-            <button type="submit">Send</button>
-        </form>
-        
-        <button class="end-chat" onclick="endChat()">End Chat</button>
+<!-- templates/chat_app/chat.html -->
+{% extends 'chat_app/base.html' %}
+
+{% block title %}Chat - {{ csv_file.raw_csv.name }}{% endblock %}
+
+{% block content %}
+<div class="chat-interface">
+    <!-- Header section showing which file we're chatting about -->
+    <header class="chat-header">
+        <h2>Discussing: {{ csv_file.raw_csv.name }}</h2>
+        <p class="chat-instructions">Ask questions about your CSV data below</p>
+    </header>
+
+    <!-- Main chat area where messages will appear -->
+    <div id="message-container" class="message-container">
+        <!-- Initial welcome message -->
+        <div class="bot-message">
+            Hello! I've analyzed your CSV file. What would you like to know about it?
+        </div>
     </div>
 
-    <script>
-        const fileId = "{{ csv_file.id }}";
+    <!-- Form for sending messages -->
+    <form id="chat-form" class="chat-form">
+        {% csrf_token %}
+        <input 
+            type="text" 
+            id="message-input" 
+            class="chat-input" 
+            placeholder="Type your question here..." 
+            autocomplete="off"
+            required
+        >
+        <button type="submit" class="send-button">Send</button>
+    </form>
 
-        // Handle chat form submission
-        $('#message-form').on('submit', function(e) {
-            e.preventDefault();
-            const message = $('#message-input').val();
+    <!-- End chat button -->
+    <div class="end-chat-container">
+        <button id="end-chat-btn" class="end-chat-btn">End Conversation</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all the DOM elements we'll need
+    const messageContainer = document.getElementById('message-container');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const endChatBtn = document.getElementById('end-chat-btn');
+
+    // Function to safely get the CSRF token
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    // Function to add a new message to the chat
+    function addMessage(content, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = isUser ? 'user-message' : 'bot-message';
+        messageDiv.textContent = content;
+        messageContainer.appendChild(messageDiv);
+        
+        // Scroll to the newest message
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+
+    // Handle sending messages
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return; // Don't send empty messages
+
+        // Show the user's message immediately
+        addMessage(message, true);
+        
+        // Clear the input field
+        messageInput.value = '';
+        
+        try {
+            // Send the message to the server
+            const response = await fetch(window.location.pathname, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: `message=${encodeURIComponent(message)}`
+            });
             
-            $.ajax({
-                url: '{% url "chat" csv_file.id %}',
-                method: 'POST',
-                data: {
-                    message: message,
-                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-                },
-                success: function(response) {
-                    $('#chat-messages').append(
-                        `<p><strong>You:</strong> ${message}</p>` +
-                        `<p><strong>Bot:</strong> ${response.response}</p>`
-                    );
-                    $('#message-input').val('');
-                    
-                    // Scroll to bottom of chat
-                    const chatMessages = document.getElementById('chat-messages');
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-            });
-        });
-
-        // Handle end chat
-        function endChat() {
-            $.ajax({
-                url: `/end-chat/${fileId}/`,
-                method: 'POST',
-                data: {
-                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-                },
-                success: function(response) {
-                    if(response.status === 'success') {
-                        window.location.href = '{% url "upload" %}';
-                    }
-                }
-            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const data = await response.json();
+            
+            // Show the bot's response
+            addMessage(data.response);
+            
+        } catch (error) {
+            console.error('Error:', error);
+            addMessage('Sorry, there was an error processing your message. Please try again.');
         }
+    });
 
-        // Handle page close/refresh
-        window.addEventListener('beforeunload', function() {
-            navigator.sendBeacon(`/end-chat/${fileId}/`);
-        });
-    </script>
-</body>
-</html>
+    // Handle ending the chat
+    endChatBtn.addEventListener('click', async function() {
+        if (!confirm('Are you sure you want to end this chat? This will delete the conversation.')) {
+            return;
+        }
+        
+        try {
+            // Get the chat ID from the URL
+            const chatId = window.location.pathname.split('/').filter(Boolean).pop();
+            
+            const response = await fetch(`/end-chat/${chatId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                // Redirect to upload page on success
+                window.location.href = '/'; // Take the user back to the home page
+            } else {
+                alert('Failed to end chat. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while ending the chat.');
+        }
+    });
+
+    // Add enter key support for sending messages
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+    });
+
+    // Focus the input when the page loads
+    messageInput.focus();
+});
+</script>
+
+<style>
+    /* Additional styles specific to the chat page */
+    .chat-interface {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .chat-header {
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .chat-instructions {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    .send-button {
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .send-button:hover {
+        background-color: #0056b3;
+    }
+
+    .end-chat-container {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .end-chat-btn {
+        padding: 0.5rem 1rem;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .end-chat-btn:hover {
+        background-color: #c82333;
+    }
+</style>
+{% endblock %}
