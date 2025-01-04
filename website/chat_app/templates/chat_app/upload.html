@@ -2,13 +2,360 @@
 <html>
 <head>
     <title>Upload CSV</title>
+    <style>
+        /* Previous styles remain the same until upload-button */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+            padding: 20px;
+            color: #2d3748;
+        }
+
+        .page-container {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .user-info {
+            background-color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .user-info:hover {
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: #4299e1;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .user-email {
+            color: #4a5568;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .upload-container {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .file-input-container {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            width: 100%;
+            height: 140px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .file-input-wrapper:hover {
+            border-color: #4299e1;
+            background-color: #f0f7ff;
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 12px;
+            color: #4299e1;
+        }
+
+        .upload-text {
+            font-size: 1rem;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+
+        .file-info {
+            color: #718096;
+            font-size: 0.875rem;
+            margin-top: 0.75rem;
+            transition: color 0.2s ease;
+        }
+
+        /* Updated upload button styles with loading state */
+        .upload-button {
+            background-color: #4299e1;
+            color: white;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 180px;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-button:not(:disabled):hover {
+            background-color: #3182ce;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(66, 153, 225, 0.2);
+        }
+
+        .upload-button:not(:disabled):active {
+            background-color: #2c5282;
+            transform: translateY(0);
+        }
+
+        .upload-button:disabled {
+            background-color: #90cdf4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading spinner styles */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Loading overlay styles */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.visible {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f0f0f0;
+            border-radius: 50%;
+            border-top-color: #4299e1;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        .loading-text {
+            color: #4a5568;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Previous animation keyframes and other styles remain the same */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-container {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .file-input-wrapper.dragging {
+            border-color: #4299e1;
+            background-color: #ebf8ff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload your CSV file</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="csv_file" accept=".csv">
-        <button type="submit">Upload</button>
-    </form>
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Uploading your file...</div>
+    </div>
+
+    <div class="page-container">
+        <div class="user-info">
+            <div class="user-avatar">
+                {{ user.email|slice:":1" }}
+            </div>
+            <div class="user-email">{{ user.email }}</div>
+        </div>
+
+        <div class="upload-container">
+            <h1>Upload your CSV file</h1>
+            <form method="post" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+                {% csrf_token %}
+                <div class="file-input-container">
+                    <div class="file-input-wrapper" id="dropZone">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        <div class="upload-text">Drag and drop your CSV file here</div>
+                        <div class="file-info">or click to browse</div>
+                        <input type="file" name="csv_file" accept=".csv" class="file-input" id="csv_file">
+                    </div>
+                </div>
+                <button type="submit" class="upload-button" id="uploadButton">
+                    <div class="spinner"></div>
+                    <span>Upload File</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('csv_file');
+        const fileInfo = document.querySelector('.file-info');
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadButton = document.getElementById('uploadButton');
+        const spinner = document.querySelector('.spinner');
+        const loadingOverlay = document.querySelector('.loading-overlay');
+
+        // Form submission handler
+        uploadForm.addEventListener('submit', function(e) {
+            if (!fileInput.files[0]) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Show loading state
+            uploadButton.disabled = true;
+            spinner.style.display = 'block';
+            uploadButton.querySelector('span').textContent = 'Uploading...';
+            loadingOverlay.classList.add('visible');
+        });
+
+        // File selection handler
+        fileInput.addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            updateFileInfo(fileName);
+        });
+
+        // Drag and drop handlers
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('dragging');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('dragging');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            
+            if (files[0]) {
+                updateFileInfo(files[0].name);
+            }
+        }
+
+        function updateFileInfo(fileName) {
+            if (fileName) {
+                fileInfo.textContent = `Selected: ${fileName}`;
+                dropZone.style.borderColor = '#4299e1';
+            } else {
+                fileInfo.textContent = 'or click to browse';
+                dropZone.style.borderColor = '#cbd5e0';
+            }
+        }
+    </script>
 </body>
 </html>
