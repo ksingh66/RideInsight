@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
-    'rideinsight-4201a68e8753.herokuapp.com',
+    'rideinsight-04db1072ff14.herokuapp.com',
     'localhost',
     '127.0.0.1',
 ]
