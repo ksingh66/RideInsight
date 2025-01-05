@@ -14,10 +14,10 @@ The goal is to enable users to ask complex questions related to the ride data an
 - **CSV/Text Parsing and Querying**: The chatbot can load and process ride data from `.txt` files, containing details such as `Booking#`, `Chauffeur`, `Price`, `Date`, etc.
 - **RAG-based Query Responses**: The chatbot uses **LangChain** and **Pinecone** for context retrieval and to answer user queries dynamically.
   - Examples include:
-    - "Who made the most money in July?"
+    - "Who made the most money?"
     - "How many rides did Chauffeur X complete last month?"
-    - "What is the total earnings for a specific date range?"
-- **Data Retrieval**: The chatbot uses **Pinecone**'s vector search to retrieve relevant context from the ride data and then generates answers using a **Groq** model through **LangChain**.
+    - "What is the total earnings for Chauffeur X?"
+- **Data Retrieval**: The chatbot uses **Pinecone**'s vector search to retrieve relevant context from a seperate vector storage and then uses pandas to generate a summary of a CSV , then it generates answers using a **Groq** model through **LangChain**.
 - **Flexible Data Input**: Ability to load ride records in text format and index them for later querying.
 
 ### Planned Improvements
@@ -27,6 +27,12 @@ The goal is to enable users to ask complex questions related to the ride data an
   - Identifying peak ride times.
   - Calculating earnings trends (percentage increases, month-over-month comparisons).
   - Analyzing patterns in customer bookings and chauffeur performance.
+
+### Immediate Improvements
+- Add all ride info for minimal and maximum earned rides for each chauffeur
+- Make dictionary for column synonyms and only use LLM for special cases to increase loading speed.
+- Account for other CSV's that are not Transportation related; a general CSV analyzing AI.
+- Add conversational memory to the Chatbot.
 
 ### Technologies Used
 - **Python**: Primary language for backend logic.
