@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from pinecone import Pinecone
-from sentence_transformers import SentenceTransformer
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
@@ -85,11 +84,13 @@ class HybridChatbot:
             raise ConnectionError(f"Failed to connect to Pinecone: {str(e)}")
 
     def _setup_embedding_models(self):
-        """Initialize embedding models for both direct use and LangChain."""
-        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+        """Initialize embedding models using HuggingFace's hosted service."""
         self.langchain_embeddings = HuggingFaceEmbeddings(
-            model_name='sentence-transformers/all-MiniLM-L6-v2'
+            model_name='sentence-transformers/all-MiniLM-L6-v2',
+            api_key=os.getenv('HUGGINGFACE_API_KEY')  # You'll need to add this to your .env
         )
+        # Remove direct sentence-transformers usage
+        self.embedding_model = self.langchain_embeddings
 
     def _setup_llm(self, model_id):
         """Initialize the language model."""
@@ -190,30 +191,20 @@ class HybridChatbot:
         )
 
     def add_documents(self, data):
-        """
-        Add documents to the Pinecone index for RAG retrieval.
-        
-        Args:
-            data (list): List of dictionaries with 'id' and 'text' keys
-        """
+        """Modified to use HuggingFace embeddings"""
         if not data:
             print("No documents to add.")
             return
             
         try:
-            embeddings = [
-                self.embedding_model.encode(d['text']).tolist() 
-                for d in data
-            ]
-            
-            vectors = [
-                {
+            vectors = []
+            for d in data:
+                embedding = self.langchain_embeddings.embed_query(d['text'])
+                vectors.append({
                     "id": d['id'],
                     "values": embedding,
                     "metadata": {"text": d['text']}
-                }
-                for d, embedding in zip(data, embeddings)
-            ]
+                })
             
             self.index.upsert(vectors=vectors, namespace=self.namespace)
             print(f"Added {len(vectors)} documents to index")
