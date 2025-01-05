@@ -14,9 +14,9 @@ db.sqlite3
 .DS_Store
 
 # Media directories
-website/media/csv_files/
-website/media/summaries/
+media/csv_files/
+media/summaries/
 
 # Migrations
-website/chat_app/migrations/
+chat_app/migrations/
 
