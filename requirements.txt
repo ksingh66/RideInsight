@@ -17,5 +17,5 @@ torch==2.1.2
 transformers==4.37.2
 numpy==1.26.4
 scikit-learn==1.6.0
-pydantic==2.6.1
+pydantic>=2.7.4,<3.0.0  # Updated to match langchain's requirement
 dj-database-url==2.1.0
