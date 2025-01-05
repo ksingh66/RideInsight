@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from .models import UploadedCSV
 from django.contrib import messages
 from .data_processor import DataSummarizer
-from .Chatbot import HybridChatbot
+from .Chatbot import Chatbot
 from django.contrib.auth import authenticate, login
 from django.views import View
 from .models import CustomUser
@@ -119,9 +119,8 @@ def chat_view(request, id):
             user_message = request.POST.get('message') #Upon the user pressing send
             
             # Initialize chatbot with the summary
-            chatbot = HybridChatbot(
+            chatbot = Chatbot(
                 context_file=csv_file.processed_csv.path,
-                rag_data_file=None
             )
             
             # Get response from chatbot

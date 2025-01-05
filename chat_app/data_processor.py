@@ -3,7 +3,7 @@
 import pandas as pd
 import os
 from datetime import datetime
-from .Chatbot import HybridChatbot
+from .Chatbot import Chatbot
 
 class DataSummarizer:
     def __init__(self, csv_path):
@@ -34,7 +34,7 @@ class DataSummarizer:
             self.df = pd.read_csv(self.csv_path)
             
             column_names = self.df.columns.tolist()
-            Standardizer = HybridChatbot()
+            Standardizer = Chatbot()
             prompt = f"""You are a data standardization assistant that maps CSV column names to standardized versions for a luxury chauffeur service booking system while strictly maintaining the original order.
                         Input columns: {column_names}
                         Rules for standardization:
@@ -62,7 +62,7 @@ class DataSummarizer:
                         Standardize these columns:{column_names}"""
 
             try:
-                standardized_columns = Standardizer.generate_basic_response(prompt)
+                standardized_columns = Standardizer.generate_response(prompt)
                 # You'll need to parse this string response into a list
                 standardized_columns = self.parse_llm_response(standardized_columns)
                 # Then rename your DataFrame columns
