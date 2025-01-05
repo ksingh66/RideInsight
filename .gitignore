@@ -17,4 +17,6 @@ db.sqlite3
 website/media/csv_files/
 website/media/summaries/
 
+# Migrations
+website/chat_app/migrations/
 
