@@ -13,4 +13,4 @@ pandas==2.2.3
 
 
 # Chatbot and Utilities
-groq==1.0.0  # Assuming 'groq' is the correct library name
+groq==0.13.1  # Assuming 'groq' is the correct library name
