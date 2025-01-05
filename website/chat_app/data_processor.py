@@ -259,7 +259,41 @@ class DataSummarizer:
             for col, count in missing[missing > 0].items():
                 percentage = (count / len(self.df)) * 100
                 self.summary.append(f"{col}: {count} missing values ({percentage:.1f}%)")
-    
+    def analyze_notes(self):
+        """Analyze the each ride that contained notes"""
+        if self.df is None:
+            print("Debug: Data not loaded yet. Please call load_data() first.")
+            self.summary.append("\nWarning: Attempted to generate statistics before loading data.")
+            return  # Exit the function early
+        
+        # Check if Notes column exists
+        if 'Notes' not in self.df.columns:
+            self.summary.append("\nError: Notes column not found in the dataset.")
+            return
+        
+        # Filter rows that have non-null and non-empty notes
+        notes_df = self.df[
+            self.df['Notes'].notna() & 
+            (self.df['Notes'].str.strip() != '')
+        ]
+
+        # Add section header
+        self.summary.append("\nDetailed Notes Analysis:")
+        self.summary.append(f"Total rides with notes: {len(notes_df)}")
+        self.summary.append(f"Percentage of rides with notes: {(len(notes_df) / len(self.df)) * 100:.1f}%\n")
+
+        # Analyze each ride with notes
+        for idx, row in notes_df.iterrows():
+            self.summary.append(f"\nRide Details ({idx + 1}):")
+            # Add all available information for the ride
+            for column in self.df.columns:
+                if pd.notna(row[column]) and str(row[column]).strip():
+                    self.summary.append(f"{column}: {row[column]}")
+
+            # Add a separator between rides
+            self.summary.append("-" * 50)
+        
+        
     def generate_summary(self, output_file):
         """
         Generate a complete summary of the dataset and save it to a file.
@@ -281,6 +315,7 @@ class DataSummarizer:
             self.generate_basic_stats()
             self.analyze_chauffer_earnings()
             self.analyze_categories()
+            self.analyze_notes()
             
             # Create directory if it doesn't exist
             os.makedirs(os.path.dirname(output_file), exist_ok=True)
