@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Account Status Update</title>
+</head>
+<body>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Account Status Update</h2>
+        <p>Dear {{ user_email }},</p>
+        
+        {% if status == 'approved' %}
+        <p>I am pleased to inform you that your account for {{ company_name }} has been approved. You now have full access to RideInsight.</p>
+        <p>You can now log in at any time and analyze your CSV records.</p>
+        {% else %}
+        <p>This email is to inform you that your account for {{ company_name }} has been unapproved.</p>
+        <p>If you believe this is an error, please reply to this email or contact me personally through my phone.</p>
+        {% endif %}
+        
+        <p>Best regards,<br>Karman Singh</p>
+    </div>
+</body>
+</html>
