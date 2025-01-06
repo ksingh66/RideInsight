@@ -21,20 +21,14 @@ The goal is to enable users to ask complex questions related to the ride data an
 - **Flexible Data Input**: Ability to load ride records in text format and index them for later querying.
 
 ### Planned Improvements
-- **Dynamic Graphing and Visualizations**: Integrating libraries like **Plotly** or **Matplotlib** to visualize ride trends, chauffeur earnings, and other key metrics.
-- **Real-Time Querying**: Provide live querying capabilities to allow users to ask questions about new, incoming ride records.
-- **Advanced Query Handling**: Add support for more sophisticated queries, such as:
-  - Identifying peak ride times.
-  - Calculating earnings trends (percentage increases, month-over-month comparisons).
-  - Analyzing patterns in customer bookings and chauffeur performance.
-  - Ride chat vs Insight chat ; Insight chat holds all records.
-
-### Immediate Improvements
-- Add a periodic cleaning of media files.
-- Add all ride info for minimal and maximum earned rides for each chauffeur
-- Make dictionary for column synonyms and only use LLM for special cases to increase loading speed.
+## Top priority improvements
+- Ride chat and Insight chat; Insight chat looks at multiple CSVs to perfrom a big picture analysis.
+- Add most earned and least earned rides for each chauffeur.
+- Add busiest to least busy days.
 - Account for other CSV's that are not Transportation related; a general CSV analyzing AI.
-- Add conversational memory to the Chatbot.
+- Make UI more interactive.
+## Second priority improvements
+- **Dynamic Graphing and Visualizations**: Integrating libraries like **Plotly** or **Matplotlib** to visualize ride trends, chauffeur earnings, and other key metrics.
 
 ### Technologies Used
 - **Python**: Primary language for backend logic.
