@@ -27,6 +27,7 @@ The goal is to enable users to ask complex questions related to the ride data an
   - Identifying peak ride times.
   - Calculating earnings trends (percentage increases, month-over-month comparisons).
   - Analyzing patterns in customer bookings and chauffeur performance.
+  - Ride chat vs Insight chat ; Insight chat holds all records.
 
 ### Immediate Improvements
 - Add all ride info for minimal and maximum earned rides for each chauffeur
