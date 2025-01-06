@@ -30,6 +30,7 @@ The goal is to enable users to ask complex questions related to the ride data an
   - Ride chat vs Insight chat ; Insight chat holds all records.
 
 ### Immediate Improvements
+- Add a periodic cleaning of media files.
 - Add all ride info for minimal and maximum earned rides for each chauffeur
 - Make dictionary for column synonyms and only use LLM for special cases to increase loading speed.
 - Account for other CSV's that are not Transportation related; a general CSV analyzing AI.
