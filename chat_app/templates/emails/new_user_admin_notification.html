@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { padding: 20px; }
+        .header { color: #333; }
+        .details { margin: 20px 0; }
+        .detail-item { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="header">New User Registration</h2>
+        <div class="details">
+            <p class="detail-item"><strong>Email:</strong> {{ user_email }}</p>
+            <p class="detail-item"><strong>Company:</strong> {{ company_name }}</p>
+            <p class="detail-item"><strong>Full Name:</strong> {{ full_name }}</p>
+            <p class="detail-item"><strong>Registered:</strong> {{ date_joined }}</p>
+        </div>
+        <p>Please review this registration and update their approval status as needed.</p>
+        <p>You can manage users through the admin panel at: <a href="{{ admin_url }}">Admin Panel</a></p>
+    </div>
+</body>
+</html>
+
